@@ -7,35 +7,29 @@ from __future__ import print_function
 import os
 import binascii
 import struct
+import traceback
 
 import idc
 import idaapi
-import ida_search
-import ida_name
-import ida_struct
-import ida_bytes
-import ida_loader
-
 
 GUID_LIST_DIR = os.path.dirname(__file__)
 GUID_LIST = []
 
-# [name, prefix, filepath]
+# [name, prefix, filepath]^
 GUID_LIST.append(['Class ID', 'CLSID_', os.path.join(GUID_LIST_DIR, 'classes.txt')])
 GUID_LIST.append(['Interface ID', 'IID_', os.path.join(GUID_LIST_DIR, 'interfaces.txt')])
-GUID_LIST.append(['Folder ID', 'GUID_FolderID', os.path.join(GUID_LIST_DIR, 'folder.txt')])
-GUID_LIST.append(['Media Type', 'GUID_Media_Type', os.path.join(GUID_LIST_DIR, 'media.txt')])
+GUID_LIST.append(['Folder ID', 'IID_', os.path.join(GUID_LIST_DIR, 'folder.txt')])
+GUID_LIST.append(['Media Type', 'IID_', os.path.join(GUID_LIST_DIR, 'media.txt')])
 
 def get_guid_tid():
-    tid = ida_struct.get_struc_id('GUID')
+    tid = idc.get_struc_id('GUID')
     if tid == idaapi.BADADDR:
         print("[*] create GUID struct")
-        tid = ida_struct.add_struc(idc.BADADDR, 'GUID', 0)
-        sptr = ida_struct.get_struc(tid)
-        ida_struct.add_struc_member(sptr, 'Data1', 0x0, idc.FF_DWORD | idc.FF_DATA, None, 4)
-        ida_struct.add_struc_member(sptr, 'Data2', 0x4, idc.FF_WORD | idc.FF_DATA, None, 2)
-        ida_struct.add_struc_member(sptr, 'Data3', 0x6, idc.FF_DWORD | idc.FF_DATA, None, 2)
-        ida_struct.add_struc_member(sptr, 'Data4', 0x8, idc.FF_BYTE | idc.FF_DATA, None, 8)
+        tid = idc.add_struc(idc.BADADDR, 'GUID', 0)
+        idc.add_struc_member(tid, 'Data1', 0x0, idc.FF_DWORD | idc.FF_DATA, -1, 4)
+        idc.add_struc_member(tid, 'Data2', 0x4, idc.FF_WORD | idc.FF_DATA, -1, 2)
+        idc.add_struc_member(tid, 'Data3', 0x6, idc.FF_WORD | idc.FF_DATA, -1, 2)
+        idc.add_struc_member(tid, 'Data4', 0x8, idc.FF_BYTE | idc.FF_DATA, -1, 8)
     return tid
 
 def make_binary_pattern(guid):
@@ -55,17 +49,20 @@ def main():
     idaapi.msg_clear()
     idaapi.show_wait_box("Please wait...")
 
-    tid = get_guid_tid()
-
     try:
+        get_guid_tid()
+
         # HTC - force load COM Helper plugi and run Scan CLSIDs from registry and clsid.cfg file
         print('[*] scan CLSIDs with IDA COM Helper plugin...')
         COM_Helper = 'comhelper64' if idc.__EA64__ else 'comhelper'
-        if not ida_loader.load_and_run_plugin(COM_Helper, 1):   # run(1) is scan CLSIDs
+        if not idaapi.load_and_run_plugin(COM_Helper, 1):   # run(1) is scan CLSIDs
             print('[*] load and run COM Helper plugin failed')
 
         print('[*] scan CLSIDs with addition GUID txt files')
         for type_name, type_prefix, filepath in GUID_LIST:
+            if idaapi.user_cancelled():
+                break
+
             smsg = '[*] scanning with file %s, type %s' % (filepath, type_name)
             print(smsg)
             idaapi.replace_wait_box(smsg)
@@ -74,6 +71,9 @@ def main():
                 lines = fp.readlines()
 
             for line in lines:
+                if idaapi.user_cancelled():
+                    break
+
                 line = line.strip()
                 if not line:
                     continue
@@ -87,23 +87,23 @@ def main():
 
                 ea = 0
                 while True:
-                    ea = idc.find_binary(ea, ida_search.SEARCH_DOWN | ida_search.SEARCH_NEXT, binary_pattern)
+                    ea = idc.find_binary(ea, idc.SEARCH_DOWN | idc.SEARCH_NEXT, binary_pattern)
                     if ea == idc.BADADDR:
                         break
 
-                    idc.del_items(ea, 16, 0)
-                    ida_bytes.create_struct(ea, ida_struct.get_struc_size(tid), tid)
-                    idc.set_name(ea, guid_name, ida_name.SN_NOWARN | ida_name.SN_FORCE)
+                    idc.del_items(ea, idc.DELIT_SIMPLE, 16)
+                    idc.create_struct(ea, -1, "GUID")
+                    idc.set_name(ea, guid_name, idaapi.SN_NOWARN | idaapi.SN_FORCE)
                     print("[*] 0x{:X}: {}".format(ea, guid_name))
 
-                    ea += 15
                     if idaapi.user_cancelled():
-                        raise Exception('User aborted')
+                        break
 
-        print("[*] finished")
 
-    except Exception as e:
-        print(e)
+        print("[*] aborted" if idaapi.user_cancelled() else "[*] finished")
+
+    except:
+        traceback.print_exc()
 
     finally:
         idaapi.hide_wait_box()
