@@ -20,3 +20,11 @@ Nên thôi, chịu khó chờ, chạy cũng nhanh mà :D
 
 Thanks đã sử dụng, bug biếc có quăng ầm vô mặt em ở đây hay bên phê tê bút cũng được. 
 HTC
+
+# Các tools/scripts khác dùng chung sau khi chạy findguid:
+
+1. https://github.com/airbus-cert/comida 
+
+Tool của Airbus CERT. Chưa được ưng ý lắm, vẫn rất chậm do query registry lại như COM Helper. Cần cải tiến.
+
+2. py-com-tools: chịu khó gấu gồ. Tool rất mạnh, có thể thay comhelper2 của Servil
