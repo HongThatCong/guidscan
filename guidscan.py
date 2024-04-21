@@ -19,7 +19,7 @@ GUID_LIST.append(["Interface ID", "IID_", os.path.join(GUID_LIST_DIR, "iids.txt"
 GUID_LIST.append(["GUID Type", "GUID_", os.path.join(GUID_LIST_DIR, "guids.txt")])
 
 # unclassified.txt - uncomment for testing
-# GUID_LIST.append(['Unclassified GUID', '', os.path.join(GUID_LIST_DIR, 'unclassified.txt')])
+# GUID_LIST.append(["Unclassified GUID", "", os.path.join(GUID_LIST_DIR, "unclassified.txt")])
 
 GUID_DICT = {}
 
@@ -99,6 +99,7 @@ def main():
                     break
 
                 line_counter += 1
+
                 line = line.strip()
                 if not line:
                     continue
@@ -129,7 +130,7 @@ def main():
                     duplicates += 1
                     print(
                         f"Duplicate GUID: {guid}"
-                        f"\n{GUID_DICT[guid][0]}:{GUID_DICT[guid][1]}: {guid} {GUID_DICT[guid][2]}"
+                        f"\n{GUID_DICT[binary_pattern][0]}:{GUID_DICT[binary_pattern][1]}: {guid} {GUID_DICT[binary_pattern][2]}"
                         f"\n{filepath}:{line_counter}: {guid} {guid_name}"
                     )
 
