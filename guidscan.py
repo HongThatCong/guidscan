@@ -19,7 +19,7 @@ GUID_LIST.append(["Interface ID", "IID_", os.path.join(GUID_LIST_DIR, "iids.txt"
 GUID_LIST.append(["GUID Type", "GUID_", os.path.join(GUID_LIST_DIR, "guids.txt")])
 
 # unclassified.txt - uncomment for testing
-GUID_LIST.append(['Unclassified GUID', '', os.path.join(GUID_LIST_DIR, 'unclassified.txt')])
+# GUID_LIST.append(['Unclassified GUID', '', os.path.join(GUID_LIST_DIR, 'unclassified.txt')])
 
 GUID_DICT = {}
 
