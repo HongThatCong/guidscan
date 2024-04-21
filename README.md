@@ -17,7 +17,7 @@ Chép hết tất cả vào 1 thư mục nào đó, chạy file script guidscan.
 Thanks đã sử dụng, bug biếc có quăng ầm vô mặt em ở đây hay bên phê tê bút cũng được. 
 HTC
 
-# Các tools/scripts khác dùng chung sau khi chạy findguid:
+# Các tools/scripts khác dùng chung sau khi chạy guidscan:
 
 1. https://github.com/airbus-cert/comida 
 
