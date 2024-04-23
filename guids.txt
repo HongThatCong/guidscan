@@ -989,5 +989,11 @@ E95E698B-7505-4E49-8FB1-CB06DC26C096 FTP_PROCESS_STATUS
 53337595-9165-4A8B-A202-7D5DBF7E4B8B POST_PROCESS_PARAMETERS
 70BDC667-33B2-45F0-AC52-C3CA46F7A656 LIBID_FtpProvider
 //
+// linh tinh
+//
+# https://stackoverflow.com/questions/37523752/reverse-engineering-the-function-arguments-of-vaultremoveitem
+3CCD5499-87A8-4B10-A215-608888DD3B55 Vault_Schema_WebPassword
+4BF4C442-9B8A-41A0-B380-DD4A704DDB28 Vault_DefaultVault_ID
+//
 // HTC chua end... :)
 //

@@ -67,14 +67,14 @@ def make_binary_pattern(guid):
         return None
 
 
-def set_cmt_ex(ea, new_cmt, repeat):
+def set_cmt_ex(ea, new_cmt, repeat=0):
     old_cmt = idc.get_cmt(ea, repeat)
     if not old_cmt:
         idc.set_cmt(ea, new_cmt, repeat)
     elif new_cmt not in old_cmt:
         if not old_cmt.endswith("\n"):
             old_cmt += "\n"
-        idc.set_cmt(ea, old_cmt + new_cmt)
+        idc.set_cmt(ea, old_cmt + new_cmt, repeat)
 
 
 GuidItem = namedtuple("GuidItem", "guid, bin_pattern, filepath, linenum, name_and_comment, name, comment")
@@ -156,6 +156,8 @@ def load_guid_database():
 
 
 def scan_with_guid_database():
+    global SCAN_RESULT
+
     idaapi.show_wait_box("Scanning with GUID database...")
     try:
         for bin_pattern, guid_item in GUID_LOADED.items():
@@ -197,9 +199,8 @@ def scan_with_guid_database():
 
 def scan_guid_in_idb():
     global SCAN_RESULT
-    SCAN_RESULT.clear()
 
-    idaapi.show_wait_box("Rescan GUID found in current IDA database...")
+    idaapi.show_wait_box("HIDECANCEL\nRescan GUID found in current IDA database...")
     try:
         more = set()
         heads = set(idautils.Heads()) - SCAN_RESULT
