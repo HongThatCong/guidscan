@@ -218,7 +218,7 @@ def scan_guid_in_idb():
     finally:
         idaapi.hide_wait_box()
         SCAN_RESULT |= more
-        print(f"Total GUID found from database scan and in IDB file {len(SCAN_REsULT)}")
+        print(f"Total GUID found from database scan and in IDB file {len(SCAN_REULT)}")
 
 
 def main():
